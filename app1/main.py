@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app1.src.api.routes import strategy_router, data_router, sentiment_router, performance_router
+from app1.src.api.routes import strategy_router, data_router, sentiment_router, performance_router, health
 from app1.src.data_ingestion.market_data import MarketDataManager
 from app1.src.sentiment_analysis.news_processor import NewsProcessor
 from app1.src.strategy_generation.engine import StrategyEngine
@@ -81,6 +81,7 @@ app.include_router(strategy_router, prefix="/api/v1/strategies", tags=["strategi
 app.include_router(data_router, prefix="/api/v1/data", tags=["data"])
 app.include_router(sentiment_router, prefix="/api/v1/sentiment", tags=["sentiment"])
 app.include_router(performance_router, prefix="/api/v1/performance", tags=["performance"])
+app.include_router(health.router, tags=["health"])
 
 
 @app.get("/")

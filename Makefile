@@ -36,6 +36,9 @@ help:
 	@echo "  db-reset        - Reset database (WARNING: deletes data)"
 	@echo "  migrate         - Run database migrations"
 	@echo "  seed-db         - Seed database with sample data"
+	@echo "  health-check    - Check system health"
+	@echo "  monitor         - Show system monitoring"
+	@echo "  watch           - Watch system status continuously"
 	@echo ""
 	@echo "Task Management:"
 	@echo "  tasks           - Show Taskmaster tasks"
@@ -189,6 +192,15 @@ health-check:
 	@echo ""
 	@echo "📈 Redis Health:"
 	@docker-compose -f docker-compose.dev.yml exec redis redis-cli ping || echo "❌ Redis not responding"
+
+# Monitoring
+monitor:
+	@echo "📊 System Monitoring Overview..."
+	@./scripts/monitor.sh overview
+
+watch:
+	@echo "👀 Watching system status..."
+	@./scripts/monitor.sh watch
 
 # Check system health
 health:
