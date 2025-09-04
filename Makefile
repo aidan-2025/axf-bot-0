@@ -1,7 +1,7 @@
 # AXF Bot 0 - Makefile
 # Common development commands and workflows
 
-.PHONY: help setup install test test-app1 test-app2 lint format start-app1 start-app2 start-docker stop-docker logs db-setup db-reset tasks next-task clean
+.PHONY: help setup install test test-app1 test-app2 lint format start-app1 start-app2 start-docker stop-docker logs db-setup db-reset tasks next-task clean dev-start dev-stop dev-restart dev-logs dev-shell migrate seed-db health-check
 
 # Default target
 help:
@@ -20,6 +20,11 @@ help:
 	@echo "  format          - Format code with black"
 	@echo ""
 	@echo "Development:"
+	@echo "  dev-start       - Start development environment"
+	@echo "  dev-stop        - Stop development environment"
+	@echo "  dev-restart     - Restart development environment"
+	@echo "  dev-logs        - View development logs"
+	@echo "  dev-shell       - Open shell in development container"
 	@echo "  start-app1      - Start App1 (Strategy Generator)"
 	@echo "  start-app2      - Start App2 (MT4 EA Generator)"
 	@echo "  start-docker    - Start all services with Docker"
@@ -28,7 +33,9 @@ help:
 	@echo ""
 	@echo "Database:"
 	@echo "  db-setup        - Set up database"
-	@echo "  db-reset         - Reset database (WARNING: deletes data)"
+	@echo "  db-reset        - Reset database (WARNING: deletes data)"
+	@echo "  migrate         - Run database migrations"
+	@echo "  seed-db         - Seed database with sample data"
 	@echo ""
 	@echo "Task Management:"
 	@echo "  tasks           - Show Taskmaster tasks"
@@ -62,6 +69,32 @@ lint:
 format:
 	@./scripts/dev-workflow.sh format
 
+# Development environment
+dev-start:
+	@echo "🚀 Starting development environment..."
+	@docker-compose -f docker-compose.dev.yml up -d
+	@echo "✅ Development environment started!"
+	@echo "📊 Web UI: http://localhost:3000"
+	@echo "🔧 App1: http://localhost:8000"
+	@echo "🔧 App2: http://localhost:8001"
+	@echo "🗄️  Database Admin: http://localhost:5050"
+	@echo "📈 Redis Admin: http://localhost:8002"
+
+dev-stop:
+	@echo "🛑 Stopping development environment..."
+	@docker-compose -f docker-compose.dev.yml down
+	@echo "✅ Development environment stopped!"
+
+dev-restart: dev-stop dev-start
+
+dev-logs:
+	@echo "📋 Viewing development logs..."
+	@docker-compose -f docker-compose.dev.yml logs -f
+
+dev-shell:
+	@echo "🐚 Opening shell in development container..."
+	@docker-compose -f docker-compose.dev.yml exec app1 /bin/bash
+
 # Development servers
 start-app1:
 	@./scripts/dev-workflow.sh start-app1
@@ -85,6 +118,16 @@ db-setup:
 
 db-reset:
 	@./scripts/dev-workflow.sh db-reset
+
+migrate:
+	@echo "🔄 Running database migrations..."
+	@python scripts/migrate.py --migrate
+	@echo "✅ Database migrations completed!"
+
+seed-db:
+	@echo "🌱 Seeding database with sample data..."
+	@python scripts/migrate.py --migrate
+	@echo "✅ Database seeded successfully!"
 
 # Task management
 tasks:
@@ -128,6 +171,24 @@ restore-db:
 monitor:
 	@echo "System resource monitoring..."
 	@docker stats
+
+# Health checks
+health-check:
+	@echo "🏥 Checking system health..."
+	@echo "📊 Web UI Health:"
+	@curl -s http://localhost:3000/api/health || echo "❌ Web UI not responding"
+	@echo ""
+	@echo "🔧 App1 Health:"
+	@curl -s http://localhost:8000/health || echo "❌ App1 not responding"
+	@echo ""
+	@echo "🔧 App2 Health:"
+	@curl -s http://localhost:8001/health || echo "❌ App2 not responding"
+	@echo ""
+	@echo "🗄️  Database Health:"
+	@docker-compose -f docker-compose.dev.yml exec postgres pg_isready -U postgres || echo "❌ Database not responding"
+	@echo ""
+	@echo "📈 Redis Health:"
+	@docker-compose -f docker-compose.dev.yml exec redis redis-cli ping || echo "❌ Redis not responding"
 
 # Check system health
 health:

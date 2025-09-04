@@ -56,8 +56,16 @@ show_help() {
     echo "  start-docker    - Start all services with Docker"
     echo "  stop-docker     - Stop all Docker services"
     echo "  logs            - View Docker logs"
+    echo "  dev-start       - Start development environment"
+    echo "  dev-stop        - Stop development environment"
+    echo "  dev-restart     - Restart development environment"
+    echo "  dev-logs        - View development logs"
+    echo "  dev-shell       - Open shell in development container"
     echo "  db-setup        - Set up database"
     echo "  db-reset        - Reset database"
+    echo "  migrate         - Run database migrations"
+    echo "  seed-db         - Seed database with sample data"
+    echo "  health-check    - Check system health"
     echo "  tasks           - Show Taskmaster tasks"
     echo "  next-task       - Show next task to work on"
     echo "  clean           - Clean temporary files"
@@ -193,6 +201,79 @@ show_next_task() {
     task-master next
 }
 
+# Function to start development environment
+dev_start() {
+    print_status "Starting development environment..."
+    docker-compose -f docker-compose.dev.yml up -d
+    print_success "Development environment started!"
+    print_status "Services available at:"
+    echo "  - Web UI: http://localhost:3000"
+    echo "  - App1: http://localhost:8000"
+    echo "  - App2: http://localhost:8001"
+    echo "  - Database Admin: http://localhost:5050"
+    echo "  - Redis Admin: http://localhost:8002"
+}
+
+# Function to stop development environment
+dev_stop() {
+    print_status "Stopping development environment..."
+    docker-compose -f docker-compose.dev.yml down
+    print_success "Development environment stopped!"
+}
+
+# Function to restart development environment
+dev_restart() {
+    dev_stop
+    dev_start
+}
+
+# Function to view development logs
+dev_logs() {
+    print_status "Viewing development logs..."
+    docker-compose -f docker-compose.dev.yml logs -f
+}
+
+# Function to open shell in development container
+dev_shell() {
+    print_status "Opening shell in development container..."
+    docker-compose -f docker-compose.dev.yml exec app1 /bin/bash
+}
+
+# Function to run database migrations
+run_migrations() {
+    print_status "Running database migrations..."
+    check_venv
+    python scripts/migrate.py --migrate
+    print_success "Database migrations completed!"
+}
+
+# Function to seed database
+seed_database() {
+    print_status "Seeding database with sample data..."
+    check_venv
+    python scripts/migrate.py --migrate
+    print_success "Database seeded successfully!"
+}
+
+# Function to check system health
+health_check() {
+    print_status "Checking system health..."
+    echo "📊 Web UI Health:"
+    curl -s http://localhost:3000/api/health || echo "❌ Web UI not responding"
+    echo ""
+    echo "🔧 App1 Health:"
+    curl -s http://localhost:8000/health || echo "❌ App1 not responding"
+    echo ""
+    echo "🔧 App2 Health:"
+    curl -s http://localhost:8001/health || echo "❌ App2 not responding"
+    echo ""
+    echo "🗄️  Database Health:"
+    docker-compose -f docker-compose.dev.yml exec postgres pg_isready -U postgres || echo "❌ Database not responding"
+    echo ""
+    echo "📈 Redis Health:"
+    docker-compose -f docker-compose.dev.yml exec redis redis-cli ping || echo "❌ Redis not responding"
+}
+
 # Function to clean temporary files
 clean_files() {
     print_status "Cleaning temporary files..."
@@ -243,11 +324,35 @@ case "${1:-help}" in
     logs)
         view_logs
         ;;
+    dev-start)
+        dev_start
+        ;;
+    dev-stop)
+        dev_stop
+        ;;
+    dev-restart)
+        dev_restart
+        ;;
+    dev-logs)
+        dev_logs
+        ;;
+    dev-shell)
+        dev_shell
+        ;;
     db-setup)
         db_setup
         ;;
     db-reset)
         db_reset
+        ;;
+    migrate)
+        run_migrations
+        ;;
+    seed-db)
+        seed_database
+        ;;
+    health-check)
+        health_check
         ;;
     tasks)
         show_tasks

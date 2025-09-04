@@ -1,19 +1,26 @@
 version: '3.8'
 
+# Development-specific Docker Compose configuration
+# This file is optimized for local development with hot reloading and debugging
+
 services:
-  # Application 1: Strategy Generator
+  # Application 1: Strategy Generator (Development)
   app1:
     build:
       context: ./app1
       dockerfile: Dockerfile
+      target: development
     ports:
       - "8000:8000"
+      - "5678:5678"  # Debug port
     environment:
       - DATABASE_URL=postgresql://postgres:password@postgres:5432/axf_bot_db
       - REDIS_URL=redis://redis:6379/0
       - INFLUXDB_URL=http://influxdb:8086
       - APP1_PORT=8000
       - DEBUG=True
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
     depends_on:
       postgres:
         condition: service_healthy
@@ -22,11 +29,13 @@ services:
       influxdb:
         condition: service_healthy
     volumes:
+      - ./app1:/app
       - ./app1/data:/app/data
       - ./app1/models:/app/models
       - ./app1/logs:/app/logs
     networks:
       - axf-bot-network
+    command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -34,26 +43,32 @@ services:
       retries: 3
       start_period: 40s
 
-  # Application 2: MT4 EA Generator
+  # Application 2: MT4 EA Generator (Development)
   app2:
     build:
       context: ./app2
       dockerfile: Dockerfile
+      target: development
     ports:
       - "8001:8001"
+      - "5679:5679"  # Debug port
     environment:
       - DATABASE_URL=postgresql://postgres:password@postgres:5432/axf_bot_db
       - APP2_PORT=8001
       - DEBUG=True
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
+      - ./app2:/app
       - ./app2/generated:/app/generated
       - ./app2/backtesting:/app/backtesting
       - ./app2/logs:/app/logs
     networks:
       - axf-bot-network
+    command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
       interval: 30s
@@ -61,23 +76,30 @@ services:
       retries: 3
       start_period: 40s
 
-  # Web UI
+  # Web UI (Development)
   web-ui:
     build:
       context: ./web-ui
       dockerfile: Dockerfile
+      target: development
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_APP1_API_URL=http://app1:8000
-      - NEXT_PUBLIC_APP2_API_URL=http://app2:8001
+      - NEXT_PUBLIC_APP1_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_APP2_API_URL=http://localhost:8001
+      - NODE_ENV=development
     depends_on:
       app1:
         condition: service_healthy
       app2:
         condition: service_healthy
+    volumes:
+      - ./web-ui:/app
+      - /app/node_modules
+      - /app/.next
     networks:
       - axf-bot-network
+    command: ["npm", "run", "dev"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s
@@ -144,33 +166,28 @@ services:
       retries: 3
       start_period: 40s
 
-  # Prometheus Monitoring
-  prometheus:
-    image: prom/prometheus:latest
+  # Database Admin (pgAdmin)
+  pgadmin:
+    image: dpage/pgadmin4:latest
     ports:
-      - "9090:9090"
-    volumes:
-      - ./deployment/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@axf-bot.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - axf-bot-network
 
-  # Grafana Dashboard
-  grafana:
-    image: grafana/grafana:latest
+  # Redis Admin (RedisInsight)
+  redis-admin:
+    image: redislabs/redisinsight:latest
     ports:
-      - "3001:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./deployment/grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./deployment/grafana/datasources:/etc/grafana/provisioning/datasources
+      - "8002:8001"
+    depends_on:
+      redis:
+        condition: service_healthy
     networks:
       - axf-bot-network
 
@@ -178,8 +195,6 @@ volumes:
   postgres_data:
   redis_data:
   influxdb_data:
-  prometheus_data:
-  grafana_data:
 
 networks:
   axf-bot-network:
