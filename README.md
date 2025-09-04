@@ -226,10 +226,14 @@ pytest --cov=app1 --cov=app2 --cov-report=html
 
 ## 📚 Documentation
 
+- [Quick Start Guide](docs/QUICK_START.md) - Get up and running in 5 minutes
+- [Development Guide](docs/DEVELOPMENT_GUIDE.md) - Comprehensive development information
+- [Database Schema](docs/DATABASE_SCHEMA.md) - Database structure and relationships
+- [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment instructions
+- [Environment Setup](docs/ENVIRONMENT_SETUP.md) - Configuration and secrets management
+- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute to the project
 - [Setup Guide](SETUP_UI.md) - Complete setup instructions
 - [Branching Strategy](docs/BRANCHING_STRATEGY.md) - Git workflow
-- [API Documentation](docs/api/) - API endpoints
-- [Deployment Guide](docs/deployment/) - Production deployment
 
 ## 🔍 Monitoring & Health Checks
 
