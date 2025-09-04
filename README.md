@@ -1,13 +1,53 @@
 # AXF Bot 0 - AI-Powered Forex Trading System
 
+[![CI](https://github.com/alextsoi/axf-bot-0/actions/workflows/ci.yml/badge.svg)](https://github.com/alextsoi/axf-bot-0/actions/workflows/ci.yml)
+[![CD](https://github.com/alextsoi/axf-bot-0/actions/workflows/cd.yml/badge.svg)](https://github.com/alextsoi/axf-bot-0/actions/workflows/cd.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Node.js 18+](https://img.shields.io/badge/node.js-18+-green.svg)](https://nodejs.org/)
+
 A comprehensive AI-powered forex trading system consisting of two interconnected applications that generate profitable trading strategies and convert them into executable MetaTrader 4 Expert Advisors.
 
-## 🚀 Project Overview
+## 🚀 Quick Start
 
-The axf-bot-0 project aims to develop a comprehensive AI-powered forex trading system with two main components:
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
+- Docker & Docker Compose
+- Git
 
-1. **AI-Powered Forex Strategy Generator** - Analyzes market data, news sentiment, and economic events to generate profitable trading strategies
-2. **MetaTrader 4 Script Development Application** - Converts generated strategies into executable MT4 Expert Advisors with built-in self-evaluation capabilities
+### 1. Clone the Repository
+```bash
+git clone https://github.com/alextsoi/axf-bot-0.git
+cd axf-bot-0
+```
+
+### 2. Set Up Development Environment
+```bash
+# Run the setup script
+./scripts/setup.sh
+
+# Or manually:
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cd web-ui && npm install
+```
+
+### 3. Start the Applications
+```bash
+# Using Docker (Recommended)
+docker-compose up -d
+
+# Or start individually
+make start-docker
+```
+
+### 4. Access the Applications
+- **Web UI Dashboard**: http://localhost:3000
+- **App1 (Strategy Generator)**: http://localhost:8000
+- **App2 (MT4 EA Generator)**: http://localhost:8001
+- **Database**: localhost:5432
 
 ## 🏗️ Architecture
 
@@ -19,10 +59,9 @@ axf-bot-0/
 │   │   ├── strategy_generation/   # AI strategy generation algorithms
 │   │   ├── sentiment_analysis/    # News sentiment processing
 │   │   ├── backtesting/          # Strategy validation and testing
-│   │   └── api/                  # REST API endpoints
+│   │   ├── api/                  # REST API endpoints
+│   │   └── strategy_monitoring/   # Performance tracking
 │   ├── config/                   # Configuration settings
-│   ├── data/                     # Market data storage
-│   ├── models/                   # ML model storage
 │   └── tests/                    # Unit and integration tests
 ├── app2/                          # MetaTrader 4 Script Development
 │   ├── src/
@@ -31,100 +70,37 @@ axf-bot-0/
 │   │   ├── fault_detection/      # Strategy fault detection
 │   │   └── mt4_integration/      # MT4 platform integration
 │   ├── templates/                # MQL4 code templates
-│   ├── generated/                # Generated EA files
-│   └── backtesting/              # Backtesting results
+│   └── generated/                # Generated EA files
+├── web-ui/                        # Next.js Web Dashboard
+│   ├── components/               # React components
+│   ├── pages/                    # Next.js pages
+│   └── lib/                      # API client and utilities
 ├── .taskmaster/                  # Task management system
 ├── docs/                         # Documentation
-├── scripts/                      # Utility scripts
-└── deployment/                   # Docker and deployment configs
+└── scripts/                      # Utility scripts
 ```
 
 ## 🛠️ Technology Stack
 
-### Application 1 (Strategy Generator)
-- **Language**: Python 3.11+
-- **ML/AI**: TensorFlow, PyTorch, scikit-learn, transformers
-- **Data Processing**: Pandas, NumPy, pandas-ta, TA-Lib
-- **API**: FastAPI, uvicorn
-- **Database**: PostgreSQL, InfluxDB, Redis
-- **News/Sentiment**: newspaper3k, textblob, vaderSentiment
+### Backend (Python)
+- **FastAPI** - Modern, fast web framework
+- **PostgreSQL** - Primary database
+- **Redis** - Caching and session storage
+- **InfluxDB** - Time series data storage
+- **TensorFlow/PyTorch** - Machine learning models
+- **Pandas/NumPy** - Data processing
 
-### Application 2 (MT4 EA Generator)
-- **Language**: Python 3.11+
-- **Code Generation**: Jinja2, Mako templates
-- **API**: FastAPI, uvicorn
-- **Database**: PostgreSQL
-- **File Processing**: PyYAML, JSON
+### Frontend (Next.js)
+- **React 18** - UI framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Recharts** - Data visualization
+- **React Query** - Data fetching
 
 ### Infrastructure
-- **Containerization**: Docker, Docker Compose
-- **Monitoring**: Prometheus, Grafana
-- **Version Control**: Git
-- **Task Management**: Taskmaster AI
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.11+
-- Docker and Docker Compose
-- Git
-
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd axf-bot-0
-```
-
-### 2. Set Up Environment
-```bash
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 3. Configure Environment Variables
-```bash
-# Copy example environment file
-cp env.example .env
-
-# Edit .env with your API keys and configuration
-nano .env
-```
-
-### 4. Initialize Taskmaster
-```bash
-# Initialize the project (already done)
-task-master init
-
-# Parse the PRD to generate tasks
-task-master parse-prd .taskmaster/docs/prd.md --num-tasks 25 --research
-```
-
-### 5. Run with Docker Compose
-```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-```
-
-### 6. Run Applications Locally
-```bash
-# Terminal 1 - Strategy Generator
-cd app1
-python main.py
-
-# Terminal 2 - MT4 EA Generator
-cd app2
-python main.py
-```
+- **Docker** - Containerization
+- **GitHub Actions** - CI/CD
+- **Prometheus/Grafana** - Monitoring
 
 ## 📊 Key Features
 
@@ -145,6 +121,13 @@ python main.py
 - ✅ Automated backtesting integration
 - ✅ Strategy summary reports
 
+### Web Dashboard
+- ✅ Real-time market insights
+- ✅ Strategy performance monitoring
+- ✅ Interactive charts and visualizations
+- ✅ Strategy management interface
+- ✅ Performance analytics and reporting
+
 ## 🎯 Success Metrics
 
 - **Strategy Success Rate**: >70% profitable strategies in backtesting
@@ -153,37 +136,62 @@ python main.py
 - **Code Generation**: <5 minutes from strategy to complete EA
 - **System Uptime**: 99.5% availability during trading hours
 
-## 📈 Development Roadmap
+## 🚀 Development
 
-### Phase 1: Foundation (Weeks 1-4)
-- [x] Project initialization and structure
-- [ ] Basic data ingestion for major currency pairs
-- [ ] Database schema and API framework
-- [ ] Simple EA generator with moving average strategy
+### Available Commands
+```bash
+# Development
+make dev              # Set up development environment
+make test             # Run all tests
+make lint             # Run linting checks
+make format           # Format code
 
-### Phase 2: Core Features (Weeks 5-8)
-- [ ] Sentiment analysis engine
-- [ ] Forex Factory calendar integration
-- [ ] Strategy generation algorithms
-- [ ] Self-evaluation framework
+# Applications
+make start-app1       # Start Strategy Generator
+make start-app2       # Start MT4 EA Generator
+make start-docker     # Start all services with Docker
 
-### Phase 3: Advanced Features (Weeks 9-12)
-- [ ] Multi-timeframe analysis
-- [ ] Advanced ML models
-- [ ] Risk management during events
-- [ ] Strategy optimization
+# Database
+make db-setup         # Set up database
+make db-reset         # Reset database (WARNING: deletes data)
 
-### Phase 4: Integration & Testing (Weeks 13-16)
-- [ ] Real-time communication between apps
-- [ ] Unified monitoring system
-- [ ] Comprehensive testing
-- [ ] Production deployment
+# Task Management
+make tasks            # Show Taskmaster tasks
+make next-task        # Show next task to work on
+```
+
+### Branching Strategy
+We follow [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/):
+- **`main`** - Production-ready code
+- **`develop`** - Integration branch for features
+- **`feature/*`** - New features and enhancements
+- **`hotfix/*`** - Critical production fixes
+
+### Contributing
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📈 Performance Monitoring
+
+### Strategy Performance Tracking
+- **Profit Factor**: Ratio of gross profit to gross loss
+- **Win Rate**: Percentage of profitable trades
+- **Max Drawdown**: Maximum peak-to-trough decline
+- **Sharpe Ratio**: Risk-adjusted return measure
+- **Performance Score**: 0-100 scale based on multiple metrics
+
+### Well-Performing Strategy Detection
+- Automatically identifies strategies performing >60% score
+- Alerts on strategies that need attention (<60% score)
+- Historical performance tracking
+- Current market condition evaluation
 
 ## 🔧 Configuration
 
 ### Environment Variables
-Key environment variables to configure:
-
 ```bash
 # Database
 DATABASE_URL=postgresql://username:password@localhost:5432/axf_bot_db
@@ -205,30 +213,41 @@ DEBUG=True
 
 ```bash
 # Run all tests
-pytest
+make test
 
-# Run with coverage
-pytest --cov=app1 --cov=app2
-
-# Run specific app tests
+# Run specific tests
 pytest app1/tests/
 pytest app2/tests/
+cd web-ui && npm test
+
+# Run with coverage
+pytest --cov=app1 --cov=app2 --cov-report=html
 ```
 
 ## 📚 Documentation
 
-- [API Documentation](docs/api/)
-- [Strategy Generation Guide](docs/strategy-generation/)
-- [MT4 Integration Guide](docs/mt4-integration/)
-- [Deployment Guide](docs/deployment/)
+- [Setup Guide](SETUP_UI.md) - Complete setup instructions
+- [Branching Strategy](docs/BRANCHING_STRATEGY.md) - Git workflow
+- [API Documentation](docs/api/) - API endpoints
+- [Deployment Guide](docs/deployment/) - Production deployment
 
-## 🤝 Contributing
+## 🔍 Monitoring & Health Checks
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Health Endpoints
+- Web UI: http://localhost:3000/api/health
+- App1: http://localhost:8000/health
+- App2: http://localhost:8001/health
+
+### Logs
+```bash
+# View all logs
+docker-compose logs -f
+
+# View specific service
+docker-compose logs -f web-ui
+docker-compose logs -f app1
+docker-compose logs -f app2
+```
 
 ## 📄 License
 
@@ -240,10 +259,20 @@ This software is for educational and research purposes only. Forex trading invol
 
 ## 📞 Support
 
-For support and questions:
-- Create an issue in the repository
-- Check the documentation in the `docs/` folder
-- Review the task management system in `.taskmaster/`
+- **Issues**: [GitHub Issues](https://github.com/alextsoi/axf-bot-0/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/alextsoi/axf-bot-0/discussions)
+- **Documentation**: [Project Wiki](https://github.com/alextsoi/axf-bot-0/wiki)
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## 📊 Project Status
+
+- **Total Tasks**: 25
+- **Completed**: 1
+- **In Progress**: 0
+- **Next Task**: Provision Development and Testing Infrastructure
 
 ---
 
