@@ -41,6 +41,22 @@ services:
     networks:
       - axf-bot-network
 
+  # Web UI
+  web-ui:
+    build:
+      context: ./web-ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_APP1_API_URL=http://app1:8000
+      - NEXT_PUBLIC_APP2_API_URL=http://app2:8001
+    depends_on:
+      - app1
+      - app2
+    networks:
+      - axf-bot-network
+
   # PostgreSQL Database
   postgres:
     image: postgres:15
