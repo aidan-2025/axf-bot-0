@@ -46,6 +46,10 @@ help:
 	@echo "  secrets-encrypt - Encrypt sensitive values"
 	@echo "  secrets-status  - Show environment status"
 	@echo ""
+	@echo "Testing:"
+	@echo "  test-env        - Test local development environment"
+	@echo "  test-quick      - Run quick environment tests"
+	@echo ""
 	@echo "Task Management:"
 	@echo "  tasks           - Show Taskmaster tasks"
 	@echo "  next-task       - Show next task to work on"
@@ -177,7 +181,7 @@ restore-db:
 	@echo "Database restored!"
 
 # Monitor system resources
-monitor:
+monitor-resources:
 	@echo "System resource monitoring..."
 	@docker stats
 
@@ -224,6 +228,15 @@ secrets-encrypt:
 secrets-status:
 	@echo "📊 Environment status..."
 	@./scripts/manage-secrets.sh status .env
+
+# Testing
+test-env:
+	@echo "🧪 Testing local development environment..."
+	@./scripts/test-environment.sh --full
+
+test-quick:
+	@echo "⚡ Running quick environment tests..."
+	@./scripts/test-environment.sh --quick
 
 # Check system health
 health:
