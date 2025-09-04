@@ -34,6 +34,14 @@ venv.bak/
 .env.development.local
 .env.test.local
 .env.production.local
+env.development
+env.production
+
+# Secrets
+secrets/*.txt
+secrets/*.key
+secrets/*.pem
+*.encrypted
 
 # IDE
 .vscode/

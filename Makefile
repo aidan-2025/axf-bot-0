@@ -40,6 +40,12 @@ help:
 	@echo "  monitor         - Show system monitoring"
 	@echo "  watch           - Watch system status continuously"
 	@echo ""
+	@echo "Secrets Management:"
+	@echo "  secrets-create  - Create .env file from template"
+	@echo "  secrets-validate - Validate environment variables"
+	@echo "  secrets-encrypt - Encrypt sensitive values"
+	@echo "  secrets-status  - Show environment status"
+	@echo ""
 	@echo "Task Management:"
 	@echo "  tasks           - Show Taskmaster tasks"
 	@echo "  next-task       - Show next task to work on"
@@ -201,6 +207,23 @@ monitor:
 watch:
 	@echo "👀 Watching system status..."
 	@./scripts/monitor.sh watch
+
+# Secrets Management
+secrets-create:
+	@echo "🔐 Creating .env file from template..."
+	@./scripts/manage-secrets.sh create development
+
+secrets-validate:
+	@echo "✅ Validating environment variables..."
+	@./scripts/manage-secrets.sh validate .env
+
+secrets-encrypt:
+	@echo "🔒 Encrypting sensitive values..."
+	@./scripts/manage-secrets.sh encrypt .env
+
+secrets-status:
+	@echo "📊 Environment status..."
+	@./scripts/manage-secrets.sh status .env
 
 # Check system health
 health:
