@@ -1,0 +1,58 @@
+# Cursor Rules
+
+## Project Context
+- Building a speech-to-text web application using Fano STT API
+- Tech Stack: React + TypeScript (frontend), Node.js + Express (backend)
+- Database: PostgreSQL with Prisma ORM
+- Authentication: JWT with refresh tokens
+- Real-time: Socket.IO for live transcription
+
+## Code Standards
+- Use TypeScript for all new code
+- Follow functional programming patterns where possible
+- Implement comprehensive error handling
+- Add JSDoc comments for complex functions
+- Use descriptive variable and function names
+- Follow REST API conventions for backend endpoints
+
+## File Organization
+- Components: Small, reusable, single-purpose
+- Services: Separate API calls from business logic  
+- Types: Define interfaces for all API responses and data structures
+- Utils: Pure functions for data transformation
+- Constants: Centralized configuration and magic numbers
+
+## Security Rules
+- Never hardcode API keys or secrets
+- Validate all inputs on both client and server
+- Implement proper CORS configuration
+- Use parameterized queries for database operations
+- Hash passwords with bcrypt (minimum 10 rounds)
+
+## API Integration
+- Use axios for HTTP requests with interceptors
+- Implement retry logic for Fano API calls
+- Handle all Fano STT API error codes properly
+- Use WebSocket for real-time features
+- Implement proper request/response typing
+
+## Testing Requirements
+- Write unit tests for utility functions
+- Integration tests for API endpoints
+- Mock external API calls in tests
+- Test error handling scenarios
+- Aim for >80% code coverage
+
+## Performance Guidelines
+- Implement proper caching strategies
+- Optimize bundle size with code splitting
+- Use React.memo for expensive components
+- Implement proper database indexing
+- Monitor API response times
+
+## Development Workflow
+- Create feature branches for new functionality
+- Write meaningful commit messages
+- Update documentation when adding features
+- Test locally before committing
+- Use environment variables for configuration
