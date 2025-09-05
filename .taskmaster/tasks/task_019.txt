@@ -1,0 +1,11 @@
+# Task ID: 19
+# Title: Develop Self-Evaluation and Adaptive Mechanisms in EAs
+# Status: pending
+# Dependencies: 18
+# Priority: high
+# Description: Implement real-time performance monitoring, drawdown detection, and adaptive responses in generated EAs.
+# Details:
+Use MQL4 classes for self-evaluation. Track win rate, profit factor, drawdown, and trade frequency. Implement parameter adjustment and strategy pause logic.
+
+# Test Strategy:
+Simulate live trading, trigger performance degradation, and validate adaptive responses.

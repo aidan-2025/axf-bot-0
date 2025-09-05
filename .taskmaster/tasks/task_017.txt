@@ -1,0 +1,11 @@
+# Task ID: 17
+# Title: Build MQL4 Code Generation Engine
+# Status: pending
+# Dependencies: 16
+# Priority: high
+# Description: Automatically generate modular EA code based on parsed strategy parameters and templates.
+# Details:
+Use Python (Jinja2 v3.1.3) for template rendering. Support complex entry/exit logic, risk management, and news filters. Generate .mq4 files with error handling and logging.
+
+# Test Strategy:
+Generate EAs for multiple strategy types, compile in MetaEditor, and validate code correctness.

@@ -1,0 +1,11 @@
+# Task ID: 7
+# Title: Integrate Economic Calendar Data
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Connect to Forex Factory Calendar via JBlanked API and MQL5 Economic Calendar functions.
+# Details:
+Fetch 50+ indicators per major economy. Classify events by impact. Store event metadata and historical outcomes. Implement real-time event monitoring and pre/post-event analysis.
+
+# Test Strategy:
+Validate event ingestion, classification, and correlation with market data for sample periods.

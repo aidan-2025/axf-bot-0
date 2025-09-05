@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 import json
 
-from app1.config.settings import Settings
+from config.settings import Settings
 
 logger = logging.getLogger(__name__)
 

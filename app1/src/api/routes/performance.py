@@ -4,11 +4,15 @@ Simple endpoints for checking strategy performance
 """
 
 from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
 from typing import List, Dict, Any
 import logging
+from datetime import datetime, timedelta
 
-from app1.src.strategy_monitoring.performance_tracker import SimplePerformanceTracker, StrategyPerformance
-from app1.config.settings import Settings
+from src.database.connection import get_db
+from src.database.models import Strategy, StrategyPerformance as DBStrategyPerformance
+from src.strategy_monitoring.performance_tracker import SimplePerformanceTracker, StrategyPerformance
+from config.settings import Settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -140,6 +144,83 @@ async def update_strategy_performance(
     except Exception as e:
         logger.error(f"Error updating strategy performance: {e}")
         raise HTTPException(status_code=500, detail="Failed to update strategy performance")
+
+@router.get("/db-summary")
+async def get_database_performance_summary(db: Session = Depends(get_db)):
+    """Get performance summary directly from database"""
+    try:
+        # Get all strategies
+        strategies = db.query(Strategy).all()
+        
+        if not strategies:
+            return {
+                "status": "success",
+                "data": {
+                    "total_strategies": 0,
+                    "well_performing_count": 0,
+                    "poor_performing_count": 0,
+                    "average_performance_score": 0,
+                    "top_performer": None,
+                    "needs_attention": []
+                }
+            }
+        
+        # Calculate performance metrics
+        well_performing = []
+        poor_performing = []
+        total_performance_score = 0
+        
+        for strategy in strategies:
+            # Simple performance scoring based on profit factor and win rate
+            performance_score = (float(strategy.profit_factor) * 20 + float(strategy.win_rate) * 0.5) / 2
+            
+            if performance_score >= 70:
+                well_performing.append(strategy)
+            else:
+                poor_performing.append(strategy)
+            
+            total_performance_score += performance_score
+        
+        average_performance_score = total_performance_score / len(strategies) if strategies else 0
+        
+        # Find top performer
+        top_performer = max(strategies, key=lambda s: (float(s.profit_factor) * 20 + float(s.win_rate) * 0.5) / 2)
+        
+        performance_data = {
+            "total_strategies": len(strategies),
+            "well_performing_count": len(well_performing),
+            "poor_performing_count": len(poor_performing),
+            "average_performance_score": round(average_performance_score, 2),
+            "top_performer": {
+                "strategy_id": top_performer.strategy_id,
+                "name": top_performer.name,
+                "current_performance": float(top_performer.total_profit),
+                "win_rate": float(top_performer.win_rate),
+                "profit_factor": float(top_performer.profit_factor),
+                "max_drawdown": float(top_performer.max_drawdown),
+                "total_trades": top_performer.total_trades,
+                "is_performing_well": True,
+                "performance_score": round((float(top_performer.profit_factor) * 20 + float(top_performer.win_rate) * 0.5) / 2, 2),
+                "last_updated": top_performer.updated_at.isoformat() if top_performer.updated_at else None
+            },
+            "needs_attention": [
+                {
+                    "strategy_id": s.strategy_id,
+                    "name": s.name,
+                    "performance_score": round((float(s.profit_factor) * 20 + float(s.win_rate) * 0.5) / 2, 2),
+                    "reason": "Low performance score"
+                }
+                for s in poor_performing
+            ]
+        }
+        
+        return {
+            "status": "success",
+            "data": performance_data
+        }
+    except Exception as e:
+        logger.error(f"Error getting database performance summary: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get database performance summary")
 
 @router.get("/health")
 async def performance_health_check():

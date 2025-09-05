@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: Develop Backtesting Framework with Real Spreads
+# Status: pending
+# Dependencies: 11
+# Priority: high
+# Description: Implement automated backtesting with 99% modeling quality using real variable spreads and tick data.
+# Details:
+Use Backtrader with custom spread simulation. Integrate historical tick data and variable spread models. Support parallel backtesting for speed.
+
+# Test Strategy:
+Backtest sample strategies, validate modeling quality, and compare results to MT4 for consistency.

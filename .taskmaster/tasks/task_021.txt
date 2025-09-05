@@ -1,0 +1,11 @@
+# Task ID: 21
+# Title: Automate EA Compilation and MT4 Deployment
+# Status: pending
+# Dependencies: 17, 20
+# Priority: medium
+# Description: Compile generated .mq4 files and deploy to MT4 instances for live and backtesting operation.
+# Details:
+Use MetaEditor CLI for automated compilation. Deploy EAs to VPS-hosted MT4 terminals. Validate installation and operation.
+
+# Test Strategy:
+Compile and deploy sample EAs, verify successful installation and execution in MT4.

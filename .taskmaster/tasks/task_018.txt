@@ -1,0 +1,11 @@
+# Task ID: 18
+# Title: Implement Universal Variable System for EAs
+# Status: pending
+# Dependencies: 17
+# Priority: medium
+# Description: Define and generate common and strategy-specific variables for all EAs, supporting risk, time, news, and technical parameters.
+# Details:
+Use MQL4 input variables and configuration files (.set). Ensure modularity and maintainability. Document all variables.
+
+# Test Strategy:
+Validate variable generation, EA parameter loading, and documentation completeness.

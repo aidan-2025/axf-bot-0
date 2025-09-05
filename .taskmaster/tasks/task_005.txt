@@ -1,0 +1,11 @@
+# Task ID: 5
+# Title: Integrate News and Sentiment Data Sources
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Connect to Reuters, Bloomberg, Forex Factory, central bank feeds, and financial Twitter for real-time news ingestion.
+# Details:
+Use official APIs (Reuters, Bloomberg), JBlanked API for Forex Factory, and Twitter API v2. Normalize news data structure. Store raw and processed news in PostgreSQL. Implement rate limiting and error handling.
+
+# Test Strategy:
+Trigger news ingestion for multiple sources, validate data structure, and check for duplicates and missing items.

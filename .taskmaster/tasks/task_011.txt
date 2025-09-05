@@ -1,0 +1,11 @@
+# Task ID: 11
+# Title: Implement Strategy Validation and Scoring
+# Status: pending
+# Dependencies: 10
+# Priority: high
+# Description: Create validation pipeline to ensure strategies meet minimum trade count, profit factor, drawdown, Sharpe ratio, and win rate requirements.
+# Details:
+Automate backtesting using Python (Backtrader v1.9.78.123). Score strategies and filter out underperformers. Store validation results in PostgreSQL.
+
+# Test Strategy:
+Run validation on generated strategies, check for compliance with PRD thresholds, and review scoring accuracy.

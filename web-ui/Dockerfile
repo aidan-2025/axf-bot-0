@@ -15,8 +15,8 @@ COPY package*.json ./
 # Development stage
 FROM base as development
 
-# Install all dependencies (including dev dependencies)
-RUN npm ci
+    # Install all dependencies (including dev dependencies)
+    RUN npm install
 
 # Copy source code
 COPY . .
@@ -39,7 +39,7 @@ CMD ["npm", "run", "dev"]
 FROM base as build
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Copy source code
 COPY . .

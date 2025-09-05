@@ -1,0 +1,11 @@
+# Task ID: 3
+# Title: Design and Implement Database Schemas
+# Status: done
+# Dependencies: 2
+# Priority: high
+# Description: Create PostgreSQL schema for structured data and InfluxDB schema for time series data.
+# Details:
+Define tables for currency pairs, historical prices, news events, sentiment scores, strategies, and performance metrics. Use SQLAlchemy for ORM in Python. Ensure time zone normalization and indexing for fast queries.
+
+# Test Strategy:
+Run schema migration scripts, insert sample data, and validate query performance and data integrity.

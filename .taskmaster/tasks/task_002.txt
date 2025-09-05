@@ -1,0 +1,55 @@
+# Task ID: 2
+# Title: Provision Development and Testing Infrastructure
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Set up a local, containerized development and testing environment for all core services, supporting Python and MQL4 workflows.
+# Details:
+Provision Docker containers for Application 1 (Python), Application 2 (MQL4/MT4), Web UI, PostgreSQL, and Redis. Configure local networking between containers using Docker Compose. Implement database initialization and migration scripts for PostgreSQL. Create development workflow scripts and Makefile commands for automation. Set up monitoring, health checks, and logging for all services in the local environment. Manage environment variables and secrets securely for local development. Provide comprehensive development documentation and setup guides. Ensure all services can be started, stopped, and tested locally using Docker Compose.
+
+# Test Strategy:
+Run Docker Compose to start all services locally. Validate service connectivity, database schema initialization, and Redis caching. Test backup and restoration of local databases. Verify health checks and monitoring outputs. Ensure all development scripts and Makefile commands execute successfully. Review documentation by following setup steps on a clean machine.
+
+# Subtasks:
+## 1. Define Docker Compose Configuration [done]
+### Dependencies: None
+### Description: Create a docker-compose.yml file specifying services for App1, App2, Web UI, PostgreSQL, and Redis with appropriate networking and volumes.
+### Details:
+
+
+## 2. Implement Database Initialization and Migration Scripts [done]
+### Dependencies: None
+### Description: Write scripts to initialize PostgreSQL schema and handle migrations for local development.
+### Details:
+
+
+## 3. Develop Workflow Automation Scripts and Makefile [done]
+### Dependencies: None
+### Description: Create scripts and Makefile commands for common development tasks (build, start, stop, test, reset).
+### Details:
+
+
+## 4. Configure Local Monitoring and Health Checks [done]
+### Dependencies: None
+### Description: Set up health check endpoints and lightweight monitoring/logging for all local services.
+### Details:
+
+
+## 5. Manage Environment Variables and Secrets [done]
+### Dependencies: None
+### Description: Implement secure handling of environment variables and secrets for local development (e.g., .env files, Docker secrets).
+### Details:
+
+
+## 6. Write Development Documentation and Setup Guides [done]
+### Dependencies: None
+### Description: Document the local development setup, including prerequisites, environment configuration, and troubleshooting.
+### Details:
+
+
+## 7. Test Local Development Environment [done]
+### Dependencies: None
+### Description: Run all services with Docker Compose, validate connectivity, database migrations, health checks, and workflow scripts.
+### Details:
+
+

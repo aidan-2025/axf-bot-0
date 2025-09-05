@@ -1,0 +1,11 @@
+# Task ID: 20
+# Title: Implement Fault Detection and Recovery in EAs
+# Status: pending
+# Dependencies: 19
+# Priority: high
+# Description: Detect common strategy faults and automatically recover via parameter adjustment, position reduction, or strategy pause.
+# Details:
+Use MQL4 for fault detection (curve fitting, market mismatch, correlation, news exposure, liquidity, slippage). Generate alerts and logs for manual review.
+
+# Test Strategy:
+Inject faults in test EAs, validate detection and recovery actions, and review alert logs.

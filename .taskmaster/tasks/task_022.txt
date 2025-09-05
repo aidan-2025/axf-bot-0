@@ -1,0 +1,11 @@
+# Task ID: 22
+# Title: Automate Backtesting and Performance Monitoring in MT4
+# Status: pending
+# Dependencies: 21
+# Priority: medium
+# Description: Initiate automated backtesting with optimized settings and monitor EA performance in real-time.
+# Details:
+Use MT4 Strategy Tester with .set files. Collect performance metrics and logs. Integrate with monitoring dashboard.
+
+# Test Strategy:
+Run backtests for multiple EAs, validate performance metrics, and monitor real-time results.

@@ -1,0 +1,11 @@
+# Task ID: 16
+# Title: Develop Strategy Import and Analysis Module (App 2)
+# Status: pending
+# Dependencies: 14
+# Priority: high
+# Description: Parse JSON strategy files, validate completeness, and generate implementation roadmap for EA development.
+# Details:
+Use Python for initial parsing, MQL4 for integration. Validate logical consistency and feasibility. Store analysis results for reference.
+
+# Test Strategy:
+Import sample strategies, check for parsing errors, and validate roadmap generation.

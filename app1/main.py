@@ -9,12 +9,19 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
-from app1.src.api.routes import strategy_router, data_router, sentiment_router, performance_router, health
-from app1.src.data_ingestion.market_data import MarketDataManager
-from app1.src.sentiment_analysis.news_processor import NewsProcessor
-from app1.src.strategy_generation.engine import StrategyEngine
-from app1.config.settings import Settings
+# Load environment variables from .env
+load_dotenv("../.env")
+
+# Debug: Print environment variables
+import os
+print(f"Environment variables loaded:")
+print(f"PERPLEXITY_API_KEY: {bool(os.getenv('PERPLEXITY_API_KEY'))}")
+print(f"OPENAI_API_KEY: {bool(os.getenv('OPENAI_API_KEY'))}")
+
+from src.api.routes import strategy_router, data_router, sentiment_router, performance_router, ai_router, orchestrator_router, tools_router, news_router, sentiment_analysis_router, economic_calendar_router, backtesting_router, strategy_validation_router, workflow_router, health
+from config.settings import Settings
 
 # Configure logging
 logging.basicConfig(
@@ -23,48 +30,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Global managers
-market_data_manager = None
-news_processor = None
-strategy_engine = None
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Application lifespan manager for startup and shutdown events."""
-    global market_data_manager, news_processor, strategy_engine
-    
-    # Startup
-    logger.info("Starting AI-Powered Forex Strategy Generator...")
-    
-    settings = Settings()
-    
-    # Initialize managers
-    market_data_manager = MarketDataManager(settings)
-    news_processor = NewsProcessor(settings)
-    strategy_engine = StrategyEngine(settings)
-    
-    # Start background tasks
-    await market_data_manager.start()
-    await news_processor.start()
-    
-    logger.info("Application startup complete")
-    
-    yield
-    
-    # Shutdown
-    logger.info("Shutting down application...")
-    await market_data_manager.stop()
-    await news_processor.stop()
-    logger.info("Application shutdown complete")
-
 
 # Create FastAPI application
 app = FastAPI(
     title="AXF Bot - Strategy Generator",
     description="AI-Powered Forex Strategy Generator for axf-bot-0",
-    version="1.0.0",
-    lifespan=lifespan
+    version="1.0.0"
 )
 
 # Add CORS middleware
@@ -81,6 +52,15 @@ app.include_router(strategy_router, prefix="/api/v1/strategies", tags=["strategi
 app.include_router(data_router, prefix="/api/v1/data", tags=["data"])
 app.include_router(sentiment_router, prefix="/api/v1/sentiment", tags=["sentiment"])
 app.include_router(performance_router, prefix="/api/v1/performance", tags=["performance"])
+app.include_router(ai_router, prefix="/api/v1/ai", tags=["ai"])
+app.include_router(orchestrator_router, prefix="/api/v1/orchestrator", tags=["orchestrator"])
+app.include_router(tools_router, prefix="/api/v1/tools", tags=["tools"])
+app.include_router(news_router, tags=["news"])
+app.include_router(sentiment_analysis_router, prefix="/api/v1/sentiment-analysis", tags=["sentiment-analysis"])
+app.include_router(economic_calendar_router, prefix="/api/v1/economic-calendar", tags=["economic-calendar"])
+app.include_router(backtesting_router, prefix="/api/v1", tags=["backtesting"])
+app.include_router(strategy_validation_router, tags=["strategy-validation"])
+app.include_router(workflow_router, tags=["workflow"])
 app.include_router(health.router, tags=["health"])
 
 
@@ -100,11 +80,18 @@ async def health_check():
     """Health check endpoint for monitoring."""
     return {
         "status": "healthy",
-        "components": {
-            "market_data": market_data_manager.is_healthy() if market_data_manager else False,
-            "news_processor": news_processor.is_healthy() if news_processor else False,
-            "strategy_engine": strategy_engine.is_healthy() if strategy_engine else False
-        }
+        "message": "App1 is running"
+    }
+
+@app.get("/debug/env")
+async def debug_env():
+    """Debug endpoint to check environment variables."""
+    import os
+    return {
+        "perplexity_key": bool(os.getenv("PERPLEXITY_API_KEY")),
+        "openai_key": bool(os.getenv("OPENAI_API_KEY")),
+        "perplexity_value": os.getenv("PERPLEXITY_API_KEY", "")[:10] + "..." if os.getenv("PERPLEXITY_API_KEY") else "None",
+        "openai_value": os.getenv("OPENAI_API_KEY", "")[:10] + "..." if os.getenv("OPENAI_API_KEY") else "None"
     }
 
 

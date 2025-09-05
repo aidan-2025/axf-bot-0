@@ -1,11 +1,8 @@
 -- AXF Bot 0 - Simple Database Schema
 -- Minimal database for storing strategies and their performance
 
--- Create database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS axf_bot_db;
-
--- Use the database
-\c axf_bot_db;
+-- Note: Database is already created by Docker environment variables
+-- This script runs after the database is created
 
 -- Main strategies table - stores all generated strategies
 CREATE TABLE strategies (

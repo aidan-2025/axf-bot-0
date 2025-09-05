@@ -1,0 +1,11 @@
+# Task ID: 14
+# Title: Develop API Layer for Inter-Application Communication
+# Status: pending
+# Dependencies: 10, 11
+# Priority: high
+# Description: Build RESTful APIs for strategy export, EA import, performance feedback, and parameter optimization requests.
+# Details:
+Use FastAPI v0.110 for Python. Implement JWT-based authentication and rate limiting. Document endpoints with OpenAPI.
+
+# Test Strategy:
+Test API endpoints for all required operations, validate security and error handling.

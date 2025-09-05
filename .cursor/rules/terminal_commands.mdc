@@ -1,0 +1,64 @@
+---
+description: Guidelines for running terminal commands to avoid hanging operations and improve user experience
+globs: **/*
+alwaysApply: true
+---
+
+- **Command Execution Best Practices:**
+  - **Set Response Expectations**: Define what a successful response looks like before running commands
+  - **Use Appropriate Timeouts**: Set timeouts based on expected response time (e.g., 5s for health checks, 30s for server startup)
+  - **Handle Timeout Scenarios**: Always provide fallback behavior when timeouts occur
+  - **Provide Clear Feedback**: Tell users what you're testing and what to expect
+
+- **Command Pattern Examples:**
+  ```bash
+  # ✅ DO: Health check with 5s timeout and clear expectation
+  curl -s --max-time 5 http://localhost:8000/health && echo "✅ API healthy" || echo "❌ API not responding"
+  
+  # ✅ DO: Server startup with 30s timeout and process check
+  timeout 30 python main.py &
+  sleep 5 && curl -s --max-time 5 http://localhost:8000/health && echo "✅ Server started" || echo "❌ Server failed to start"
+  
+  # ✅ DO: Port check before starting service
+  nc -z localhost 8000 && echo "Port 8000 in use" || echo "Port 8000 available"
+  ```
+
+- **Timeout Guidelines:**
+  - **Health checks**: 5 seconds (services should respond quickly)
+  - **Server startup**: 30 seconds (reasonable time for initialization)
+  - **File operations**: 10 seconds (should be nearly instant)
+  - **Network requests**: 10 seconds (with retry logic if needed)
+  - **Database operations**: 15 seconds (can take time for complex queries)
+
+- **Server Startup Guidelines:**
+  - **Check Dependencies First**: Verify all required modules are installed before starting servers
+  - **Use Background Mode Sparingly**: Only run background processes when absolutely necessary
+  - **Provide Clear Instructions**: Tell users exactly what to do and what to expect
+  - **Test Endpoints**: Verify services are actually running before declaring success
+
+- **Error Handling:**
+  - **Always Check Exit Codes**: Verify commands succeeded before proceeding
+  - **Provide Fallbacks**: Have alternative approaches when primary methods fail
+  - **Explain Issues**: Clearly describe what went wrong and how to fix it
+  - **Don't Retry Indefinitely**: Limit retry attempts to avoid infinite loops
+
+- **User Experience:**
+  - **Be Explicit**: Tell users exactly what you're doing and why
+  - **Provide Status Updates**: Keep users informed of progress
+  - **Offer Alternatives**: If one approach fails, suggest alternatives
+  - **Respect User Time**: Don't make users wait for unnecessary operations
+
+- **Common Hanging Commands to Avoid:**
+  - `curl` without timeout flags
+  - `python main.py` without checking dependencies first
+  - `npm run dev` without verifying the directory exists
+  - `docker-compose up` without checking if Docker is running
+  - Any command that waits for user input
+  - Network requests without proper error handling
+
+- **Safe Alternatives:**
+  - Use `curl -s --max-time 5` instead of `curl`
+  - Check `ps aux | grep process` before starting services
+  - Use `timeout 10 command` for potentially long operations
+  - Test with `curl -I` (HEAD request) before full requests
+  - Use `nc -z host port` to test if ports are open

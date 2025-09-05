@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Develop NLP-Based Sentiment Analysis Engine
+# Status: pending
+# Dependencies: 5
+# Priority: high
+# Description: Build a BERT-based ensemble model for multi-language financial sentiment scoring.
+# Details:
+Use HuggingFace Transformers (BERT, FinBERT) with TensorFlow 2.12 or PyTorch 2.1. Implement lexicon-based fallback. Support English, German, Japanese, Chinese. Score news items (-100 to +100), weight by source credibility, and track sentiment trends.
+
+# Test Strategy:
+Run sentiment scoring on labeled datasets, validate accuracy, latency (<5s/item), and multi-language support.

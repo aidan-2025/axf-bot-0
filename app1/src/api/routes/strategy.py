@@ -1,47 +1,69 @@
 """
 Strategy API routes
-Simple endpoints for strategy management
+Comprehensive endpoints for strategy management using SQLAlchemy models
 """
 
-from fastapi import APIRouter, HTTPException
-from typing import List, Dict, Any
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
+from typing import List, Dict, Any, Optional
 import logging
+from datetime import datetime
+
+from src.database.connection import get_db
+from src.database.models import Strategy, StrategyCurrencyPair, StrategyTimeframe, CurrencyPair, Timeframe
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/")
-async def get_strategies():
-    """Get all strategies"""
+async def get_strategies(db: Session = Depends(get_db)):
+    """Get all strategies with their relationships"""
     try:
-        # Mock data for now
-        strategies = [
-            {
-                "id": "STRAT_001",
-                "name": "EUR/USD Trend Following",
-                "description": "Simple moving average crossover strategy",
-                "strategy_type": "trend_following",
-                "currency_pairs": ["EURUSD"],
-                "timeframes": ["H1", "H4"],
-                "status": "active",
+        # Query strategies with their currency pairs and timeframes
+        strategies_query = db.query(Strategy).all()
+        
+        strategies = []
+        for strategy in strategies_query:
+            # Get currency pairs for this strategy
+            currency_pairs = db.query(CurrencyPair.symbol).join(
+                StrategyCurrencyPair, 
+                CurrencyPair.id == StrategyCurrencyPair.currency_pair_id
+            ).filter(StrategyCurrencyPair.strategy_id == strategy.id).all()
+            
+            # Get timeframes for this strategy
+            timeframes = db.query(Timeframe.name).join(
+                StrategyTimeframe,
+                Timeframe.id == StrategyTimeframe.timeframe_id
+            ).filter(StrategyTimeframe.strategy_id == strategy.id).all()
+            
+            strategy_data = {
+                "id": strategy.strategy_id,
+                "name": strategy.name,
+                "description": strategy.description,
+                "strategy_type": strategy.strategy_type,
+                "currency_pairs": [cp.symbol for cp in currency_pairs],
+                "timeframes": [tf.name for tf in timeframes],
+                "status": strategy.status,
                 "performance": {
-                    "profit_factor": 1.45,
-                    "win_rate": 62.5,
-                    "max_drawdown": 8.2,
-                    "sharpe_ratio": 1.23,
-                    "total_trades": 156,
-                    "total_profit": 2340.50
+                    "profit_factor": float(strategy.profit_factor),
+                    "win_rate": float(strategy.win_rate),
+                    "max_drawdown": float(strategy.max_drawdown),
+                    "sharpe_ratio": float(strategy.sharpe_ratio),
+                    "total_trades": strategy.total_trades,
+                    "total_profit": float(strategy.total_profit)
                 },
-                "created_at": "2024-01-01T00:00:00Z",
-                "last_updated": "2024-01-15T12:00:00Z"
+                "created_at": strategy.created_at.isoformat() if strategy.created_at else None,
+                "last_updated": strategy.updated_at.isoformat() if strategy.updated_at else None
             }
-        ]
+            strategies.append(strategy_data)
+        
+        active_count = len([s for s in strategies if s["status"] == "active"])
         
         return {
             "status": "success",
             "data": {
                 "all": strategies,
-                "active": len([s for s in strategies if s["status"] == "active"]),
+                "active": active_count,
                 "recent": strategies[:5]
             }
         }
@@ -50,33 +72,55 @@ async def get_strategies():
         raise HTTPException(status_code=500, detail="Failed to get strategies")
 
 @router.get("/{strategy_id}")
-async def get_strategy(strategy_id: str):
-    """Get a specific strategy"""
+async def get_strategy(strategy_id: str, db: Session = Depends(get_db)):
+    """Get a specific strategy by strategy_id"""
     try:
-        # Mock implementation
-        if strategy_id == "STRAT_001":
-            return {
-                "status": "success",
-                "data": {
-                    "id": "STRAT_001",
-                    "name": "EUR/USD Trend Following",
-                    "description": "Simple moving average crossover strategy",
-                    "strategy_type": "trend_following",
-                    "currency_pairs": ["EURUSD"],
-                    "timeframes": ["H1", "H4"],
-                    "status": "active",
-                    "performance": {
-                        "profit_factor": 1.45,
-                        "win_rate": 62.5,
-                        "max_drawdown": 8.2,
-                        "sharpe_ratio": 1.23,
-                        "total_trades": 156,
-                        "total_profit": 2340.50
-                    }
-                }
-            }
-        else:
+        # Query strategy by strategy_id
+        strategy = db.query(Strategy).filter(Strategy.strategy_id == strategy_id).first()
+        
+        if not strategy:
             raise HTTPException(status_code=404, detail="Strategy not found")
+        
+        # Get currency pairs for this strategy
+        currency_pairs = db.query(CurrencyPair.symbol).join(
+            StrategyCurrencyPair, 
+            CurrencyPair.id == StrategyCurrencyPair.currency_pair_id
+        ).filter(StrategyCurrencyPair.strategy_id == strategy.id).all()
+        
+        # Get timeframes for this strategy
+        timeframes = db.query(Timeframe.name).join(
+            StrategyTimeframe,
+            Timeframe.id == StrategyTimeframe.timeframe_id
+        ).filter(StrategyTimeframe.strategy_id == strategy.id).all()
+        
+        strategy_data = {
+            "id": strategy.strategy_id,
+            "name": strategy.name,
+            "description": strategy.description,
+            "strategy_type": strategy.strategy_type,
+            "currency_pairs": [cp.symbol for cp in currency_pairs],
+            "timeframes": [tf.name for tf in timeframes],
+            "status": strategy.status,
+            "performance": {
+                "profit_factor": float(strategy.profit_factor),
+                "win_rate": float(strategy.win_rate),
+                "max_drawdown": float(strategy.max_drawdown),
+                "sharpe_ratio": float(strategy.sharpe_ratio),
+                "total_trades": strategy.total_trades,
+                "total_profit": float(strategy.total_profit)
+            },
+            "parameters": strategy.parameters,
+            "risk_management": strategy.risk_management,
+            "entry_conditions": strategy.entry_conditions,
+            "exit_conditions": strategy.exit_conditions,
+            "created_at": strategy.created_at.isoformat() if strategy.created_at else None,
+            "last_updated": strategy.updated_at.isoformat() if strategy.updated_at else None
+        }
+        
+        return {
+            "status": "success",
+            "data": strategy_data
+        }
     except HTTPException:
         raise
     except Exception as e:
