@@ -18,6 +18,9 @@ out/
 build/
 dist/
 
+# Next.js SWC binaries (large files)
+**/node_modules/@next/swc-*/next-swc.*.node
+
 # Environment variables
 .env
 .env.local
